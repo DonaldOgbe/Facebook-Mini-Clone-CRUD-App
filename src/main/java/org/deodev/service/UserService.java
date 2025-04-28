@@ -12,20 +12,22 @@ public class UserService {
         this.userDAO = new UserDAO();
     }
 
-    public void registerUser(UserDTO userDto) {
-        userDto.setPassword(hashPassword(userDto.getPassword()));
-        User user = new User(userDto);
+    public boolean registerUser(UserDTO userDto) {
+        if (!emailExist(userDto.getEmail())) {
+            userDto.setPassword(hashPassword(userDto.getPassword()));
+            User user = new User(userDto);
 
-        boolean registered = userDAO.save(user);
-
-        if (!registered) throw new RuntimeException("Registration failed");
+            return userDAO.save(user);
+        } else {
+            throw new RuntimeException("Email already exists");
+        }
     }
 
     public static String hashPassword(String plainPassword) {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
     }
 
-    public boolean doesEmailExist(String email) {
-        return true;
+    public boolean emailExist(String email) {
+        return userDAO.findUserByEmail(email) != null;
     }
 }
