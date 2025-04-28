@@ -1,4 +1,4 @@
-# 25-04-2025
+# 25 - 04 - 2025
 
 - Made schemas for entities in the facebook_clone database
 
@@ -10,6 +10,11 @@
 
 
 - Added DatabaseUtil class
+
+# 27 - 04 - 2025
+
+- Created a DAO for User entity, wrote some methods and tests
+- Created a User entity/model
+- Created a DTO for User 
+- Created a UserService class
 - 
-
-
