@@ -11,10 +11,14 @@ public final class DatabaseUtil {
 
     public static Connection getConnection() {
         try {
+            Class.forName("org.postgresql.Driver"); // ✅ force-load the driver
             return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        } catch (ClassNotFoundException e) {
+            System.err.println("❌ PostgreSQL JDBC Driver not found.");
+            e.printStackTrace();
         } catch (SQLException e) {
             System.err.println("❌ Failed to connect to database: " + e.getMessage());
-            return null;
         }
+        return null;
     }
 }

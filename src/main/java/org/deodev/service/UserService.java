@@ -1,8 +1,10 @@
 package org.deodev.service;
 
 import org.deodev.dao.UserDAO;
-import org.deodev.dto.UserDTO;
+import org.deodev.dto.request.UserDTO;
+import org.deodev.exception.ValidationException;
 import org.deodev.model.User;
+import org.deodev.validation.DTOValidator;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
@@ -12,14 +14,21 @@ public class UserService {
         this.userDAO = new UserDAO();
     }
 
-    public boolean registerUser(UserDTO userDto) {
-        if (!emailExist(userDto.getEmail())) {
+    public User registerUser(UserDTO userDto) {
+        try {
+            DTOValidator.validateUser(userDto);
+
+            if (emailExist(userDto.getEmail())) {
+                throw new ValidationException("Email already exists");
+            }
+
             userDto.setPassword(hashPassword(userDto.getPassword()));
             User user = new User(userDto);
-
             return userDAO.save(user);
-        } else {
-            throw new RuntimeException("Email already exists");
+        } catch (ValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("User registration failed", e);
         }
     }
 

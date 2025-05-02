@@ -17,4 +17,17 @@
 - Created a User entity/model
 - Created a DTO for User 
 - Created a UserService class
-- 
+
+
+# 28 - 04 - 2025
+
+- Created UserController 
+- add init and doPost methods
+
+# 02 - 05 - 2025
+
+- Created Response DTO's
+- Created Validation exception and DTOValidator and change validation logic
+- Update classes to match new Validation Logic
+- Fix Tomcat integration issues 
+
