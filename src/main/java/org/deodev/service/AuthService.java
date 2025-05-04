@@ -1,29 +1,31 @@
 package org.deodev.service;
 
 import org.deodev.dao.UserDAO;
-import org.deodev.dto.request.UserDTO;
+import org.deodev.dto.request.UserRegistrationDTO;
 import org.deodev.exception.ValidationException;
 import org.deodev.model.User;
-import org.deodev.validation.DTOValidator;
+import org.deodev.validation.UserRegistrationDTOValidator;
+import org.deodev.validation.Validator;
 import org.mindrot.jbcrypt.BCrypt;
 
-public class UserService {
+public class AuthService {
     private final UserDAO userDAO;
+    private Validator<UserRegistrationDTO> dtoValidator = new UserRegistrationDTOValidator();
 
-    public UserService() {
+    public AuthService() {
         this.userDAO = new UserDAO();
     }
 
-    public User registerUser(UserDTO userDto) {
+    public User registerUser(UserRegistrationDTO userRegistrationDto) {
         try {
-            DTOValidator.validateUser(userDto);
+            dtoValidator.validate(userRegistrationDto);
 
-            if (emailExist(userDto.getEmail())) {
+            if (emailExist(userRegistrationDto.getEmail())) {
                 throw new ValidationException("Email already exists");
             }
 
-            userDto.setPassword(hashPassword(userDto.getPassword()));
-            User user = new User(userDto);
+            userRegistrationDto.setPassword(hashPassword(userRegistrationDto.getPassword()));
+            User user = new User(userRegistrationDto);
             return userDAO.save(user);
         } catch (ValidationException e) {
             throw e;

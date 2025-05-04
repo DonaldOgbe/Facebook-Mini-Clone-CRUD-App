@@ -2,7 +2,7 @@ package org.deodev.dao;
 
 
 
-import org.deodev.dto.request.UserDTO;
+import org.deodev.dto.request.UserRegistrationDTO;
 import org.deodev.model.User;
 import org.deodev.util.DatabaseUtil;
 
@@ -55,13 +55,13 @@ public class UserDAO {
 
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        UserDTO userDTO = new UserDTO(
+                        UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
                                 resultSet.getString("name"),
                                 resultSet.getString("email"),
                                 resultSet.getString("password")
                         );
 
-                        User user = new User(userDTO);
+                        User user = new User(userRegistrationDTO);
                         user.setId(resultSet.getInt("id"));
                         user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
 

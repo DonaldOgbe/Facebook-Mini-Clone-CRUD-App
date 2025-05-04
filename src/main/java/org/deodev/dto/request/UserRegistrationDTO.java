@@ -2,21 +2,19 @@ package org.deodev.dto.request;
 
 import lombok.Data;
 
-import java.util.InputMismatchException;
-
 @Data
-public class UserDTO {
+public class UserRegistrationDTO {
     private String name;
     private String email;
     private String password;
 
-    public UserDTO(String name, String email, String password) {
+    public UserRegistrationDTO(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public UserDTO() {
+    public UserRegistrationDTO() {
         // For Jackson deserialization
     }
 

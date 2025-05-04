@@ -5,24 +5,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.deodev.dto.request.UserDTO;
+import org.deodev.dto.request.UserRegistrationDTO;
 import org.deodev.dto.response.ErrorResponse;
 import org.deodev.dto.response.SignupResponse;
 import org.deodev.model.User;
-import org.deodev.service.UserService;
+import org.deodev.service.AuthService;
 import java.io.IOException;
-import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.deodev.validation.DTOValidator;
 
 @WebServlet("/signup")
 public class UserController extends HttpServlet {
 
-    private UserService userService;
+    private AuthService authService;
 
     @Override
     public void init() throws ServletException {
-        userService = new UserService();
+        authService = new AuthService();
     }
 
     @Override
@@ -31,10 +29,9 @@ public class UserController extends HttpServlet {
 
         ObjectMapper mapper = new ObjectMapper();
         try {
-            UserDTO userDTO = mapper.readValue(request.getReader(), UserDTO.class);
-            DTOValidator.validateUser(userDTO);
+            UserRegistrationDTO userRegistrationDTO = mapper.readValue(request.getReader(), UserRegistrationDTO.class);
 
-            User user = userService.registerUser(userDTO);
+            User user = authService.registerUser(userRegistrationDTO);
 
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_OK);
