@@ -32,3 +32,6 @@
 - Fix Tomcat integration issues 
 
 # 05 - 05 - 2025
+- Updated UserService to AuthService
+- Created Login controller and dto
+- Updated Validation classes and created a Validator interface and a login dto validator
