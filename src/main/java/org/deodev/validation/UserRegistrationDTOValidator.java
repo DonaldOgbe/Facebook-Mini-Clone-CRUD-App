@@ -1,10 +1,10 @@
 package org.deodev.validation;
 
-import org.deodev.dto.request.UserRegistrationDTO;
+import org.deodev.dto.request.UserSignupDTO;
 import org.deodev.exception.ValidationException;
 
-public class UserRegistrationDTOValidator implements Validator<UserRegistrationDTO> {
-    public void validate(UserRegistrationDTO dto) {
+public class UserRegistrationDTOValidator implements Validator<UserSignupDTO> {
+    public void validate(UserSignupDTO dto) {
         if (dto.getName() == null) throw new ValidationException("User name cannot be null");
         if (dto.getName().isEmpty()) throw new ValidationException("User name cannot be empty");
         if (dto.getEmail() == null) throw new ValidationException("User email cannot be null");

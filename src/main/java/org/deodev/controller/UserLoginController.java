@@ -1,21 +1,21 @@
 package org.deodev.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.deodev.dto.request.UserRegistrationDTO;
+import jakarta.servlet.http.HttpSession;
+import org.deodev.dto.request.UserLoginDTO;
 import org.deodev.dto.response.ErrorResponse;
-import org.deodev.dto.response.SignupResponse;
 import org.deodev.model.User;
 import org.deodev.service.AuthService;
+
 import java.io.IOException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebServlet("/signup")
-public class UserController extends HttpServlet {
-
+@WebServlet("/login")
+public class UserLoginController extends HttpServlet {
     private AuthService authService;
 
     @Override
@@ -28,25 +28,30 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
 
         ObjectMapper mapper = new ObjectMapper();
-        try {
-            UserRegistrationDTO userRegistrationDTO = mapper.readValue(request.getReader(), UserRegistrationDTO.class);
 
-            User user = authService.registerUser(userRegistrationDTO);
+        try {
+            UserLoginDTO dto = mapper.readValue(request.getReader(), UserLoginDTO.class);
+
+            User user = authService.login(dto);
+
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
 
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_OK);
 
-            mapper.writeValue(response.getWriter(), new SignupResponse(user));
+            mapper.writeValue(response.getWriter(), "message: Login Successful");
+
         } catch (RuntimeException e) {
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-            mapper.writeValue(response.getWriter(), new ErrorResponse("Registration Failed", e.getMessage()));
-        } catch (Exception e) {
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Login Failed", e.getMessage()));
+        }  catch (Exception e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-            mapper.writeValue(response.getWriter(), new ErrorResponse("Registration Failed", e.getMessage()));
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Login Failed", e.getMessage()));
             e.printStackTrace();
         }
     }

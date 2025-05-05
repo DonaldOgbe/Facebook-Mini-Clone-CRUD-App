@@ -1,7 +1,7 @@
 package org.deodev.model;
 
 import lombok.Data;
-import org.deodev.dto.request.UserRegistrationDTO;
+import org.deodev.dto.request.UserSignupDTO;
 
 import java.time.LocalDateTime;
 
@@ -13,10 +13,10 @@ public class User {
     private String password;
     private LocalDateTime createdAt;
 
-    public User(UserRegistrationDTO userRegistrationDto) {
-        this.name  = userRegistrationDto.getName();
-        this.email = userRegistrationDto.getEmail();
-        this.password = userRegistrationDto.getPassword();
+    public User(UserSignupDTO userSignupDto) {
+        this.name  = userSignupDto.getName();
+        this.email = userSignupDto.getEmail();
+        this.password = userSignupDto.getPassword();
     }
 
     public String getName() {

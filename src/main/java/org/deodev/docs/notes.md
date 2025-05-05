@@ -35,3 +35,7 @@
 - Updated UserService to AuthService
 - Created Login controller and dto
 - Updated Validation classes and created a Validator interface and a login dto validator
+- Created Post entity and PostDAO with save method and logic
+- Created CreatePostDTO and validator 
+- Created endpoint for creating a post with the controller and service
+- 

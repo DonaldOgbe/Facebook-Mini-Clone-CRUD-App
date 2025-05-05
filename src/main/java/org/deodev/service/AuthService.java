@@ -2,7 +2,7 @@ package org.deodev.service;
 
 import org.deodev.dao.UserDAO;
 import org.deodev.dto.request.UserLoginDTO;
-import org.deodev.dto.request.UserRegistrationDTO;
+import org.deodev.dto.request.UserSignupDTO;
 import org.deodev.exception.ValidationException;
 import org.deodev.model.User;
 import org.deodev.validation.UserLoginDTOValidator;
@@ -12,14 +12,14 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class AuthService {
     private final UserDAO userDAO;
-    private final Validator<UserRegistrationDTO> userRegistrationDTOValidator = new UserRegistrationDTOValidator();
+    private final Validator<UserSignupDTO> userRegistrationDTOValidator = new UserRegistrationDTOValidator();
     private final Validator<UserLoginDTO> userLoginDTOValidator = new UserLoginDTOValidator();
 
     public AuthService() {
         this.userDAO = new UserDAO();
     }
 
-    public User registerUser(UserRegistrationDTO dto) {
+    public User registerUser(UserSignupDTO dto) {
         try {
             userRegistrationDTOValidator.validate(dto);
 
@@ -29,6 +29,7 @@ public class AuthService {
 
             dto.setPassword(hashPassword(dto.getPassword()));
             User user = new User(dto);
+
             return userDAO.save(user);
         } catch (ValidationException e) {
             throw e;

@@ -12,7 +12,7 @@ import org.deodev.dto.response.ErrorResponse;
 import java.io.IOException;
 
 @WebServlet("/logout")
-public class LogoutController extends HttpServlet {
+public class UserLogoutController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

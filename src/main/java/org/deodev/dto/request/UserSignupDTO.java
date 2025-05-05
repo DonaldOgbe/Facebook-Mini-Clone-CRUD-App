@@ -3,18 +3,18 @@ package org.deodev.dto.request;
 import lombok.Data;
 
 @Data
-public class UserRegistrationDTO {
+public class UserSignupDTO {
     private String name;
     private String email;
     private String password;
 
-    public UserRegistrationDTO(String name, String email, String password) {
+    public UserSignupDTO(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public UserRegistrationDTO() {
+    public UserSignupDTO() {
         // For Jackson deserialization
     }
 

@@ -1,6 +1,6 @@
 package org.deodev.dao;
 
-import org.deodev.dto.request.UserRegistrationDTO;
+import org.deodev.dto.request.UserSignupDTO;
 import org.deodev.model.User;
 import org.deodev.validation.UserRegistrationDTOValidator;
 import org.deodev.validation.Validator;
@@ -11,15 +11,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserDAOTest {
     User testUser;
-    UserRegistrationDTO testUserRegistrationDTO;
+    UserSignupDTO testUserSignupDTO;
     UserDAO testUserDAO;
-    Validator<UserRegistrationDTO> dtoValidator = new UserRegistrationDTOValidator();
+    Validator<UserSignupDTO> dtoValidator = new UserRegistrationDTOValidator();
 
     @BeforeEach
     void setup() {
-        testUserRegistrationDTO = new UserRegistrationDTO("John", "john@email.com", "5463321553214cjdhdud");
-        dtoValidator.validate(testUserRegistrationDTO);
-        testUser = new User(testUserRegistrationDTO);
+        testUserSignupDTO = new UserSignupDTO("John", "john@email.com", "5463321553214cjdhdud");
+        dtoValidator.validate(testUserSignupDTO);
+        testUser = new User(testUserSignupDTO);
         testUserDAO = new UserDAO();
     }
 
