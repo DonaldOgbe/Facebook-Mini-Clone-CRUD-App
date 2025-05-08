@@ -62,4 +62,14 @@ public class PostService {
             throw new RuntimeException("Post Service Error", e);
         }
     }
+
+    public void deletePost(int id) {
+        try {
+            dao.deletePost(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Post Service Error", e);
+        }
+    }
 }

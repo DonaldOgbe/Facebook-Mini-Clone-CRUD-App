@@ -3,9 +3,7 @@ package org.deodev.dao;
 import org.deodev.dto.request.CreatePostDTO;
 import org.deodev.model.Post;
 import org.deodev.util.DatabaseUtil;
-
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +40,6 @@ public class PostDAO {
 
         return post;
     }
-
 
     public Post getById(int id) throws SQLException {
         String sql = "SELECT * FROM posts WHERE id = ?";
@@ -139,6 +136,25 @@ public class PostDAO {
         }
 
         return updatedPost;
+    }
+
+    public void deletePost(int id) throws SQLException {
+        String sql = "DELETE FROM posts WHERE id = ?";
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, id);
+
+                int rowsAffected = statement.executeUpdate();
+
+                if (rowsAffected == 0) {
+                    throw  new SQLException("No Posts in table by the given ID");
+                }
+            }
+        }
     }
 
 }

@@ -46,3 +46,4 @@
 - Created endpoint for getting all posts 
 - Added a new response Generic Api Response
 - Created endpoint for updating posts by id
+- Created endpoint for deleting post by id
