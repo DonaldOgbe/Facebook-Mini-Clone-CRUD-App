@@ -1,4 +1,4 @@
-package org.deodev.controller;
+package org.deodev.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

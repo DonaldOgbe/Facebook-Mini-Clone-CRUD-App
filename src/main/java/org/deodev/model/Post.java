@@ -19,6 +19,7 @@ public class Post {
     private LocalDateTime updatedAt;
 
     public Post(CreatePostDTO dto) {
+        this.id = dto.getId();
         this.content = dto.getContent();
         this.userId = dto.getUserId();
     }

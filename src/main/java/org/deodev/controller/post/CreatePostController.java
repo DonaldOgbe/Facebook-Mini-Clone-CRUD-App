@@ -1,4 +1,4 @@
-package org.deodev.controller;
+package org.deodev.controller.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.deodev.dto.request.CreatePostDTO;
 import org.deodev.dto.response.ErrorResponse;
+import org.deodev.model.Post;
 import org.deodev.model.User;
 import org.deodev.service.PostService;
 
@@ -43,10 +44,10 @@ public class CreatePostController extends HttpServlet {
             CreatePostDTO dto = mapper.readValue(request.getReader(), CreatePostDTO.class);
 
             dto.setUserId(user.getId());
-            postService.createPost(dto);
+            Post post = postService.createPost(dto);
 
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(HttpServletResponse.SC_CREATED);
             mapper.writeValue(response.getWriter(),
                     Map.of(
                             "message", "Post Created Successfully",

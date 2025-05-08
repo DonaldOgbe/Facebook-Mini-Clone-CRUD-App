@@ -1,4 +1,4 @@
-package org.deodev.controller;
+package org.deodev.controller.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -39,7 +39,7 @@ public class GetAllPostsController extends HttpServlet {
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_OK);
-            mapper.writeValue(response.getWriter(), new GenericApiResponse<>(true, "GET posts Success", postList));
+            mapper.writeValue(response.getWriter(), new GenericApiResponse<>("GET posts Success", postList));
         } catch (Exception e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

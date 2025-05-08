@@ -5,6 +5,7 @@ import org.deodev.model.Post;
 import org.deodev.util.DatabaseUtil;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,11 +59,10 @@ public class PostDAO {
 
                 try(ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        dto = new CreatePostDTO(resultSet.getString("content"),
+                        dto = new CreatePostDTO(resultSet.getInt("id"), resultSet.getString("content"),
                                 resultSet.getInt("user_id"));
 
                         post = new Post(dto);
-                        post.setId(resultSet.getInt("id"));
                         post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                         post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
 
@@ -89,23 +89,56 @@ public class PostDAO {
 
                     if (resultSet != null) {
                         while (resultSet.next()) {
-                            CreatePostDTO dto = new CreatePostDTO(resultSet.getString("content"),
+                            CreatePostDTO dto = new CreatePostDTO(resultSet.getInt("id"), resultSet.getString("content"),
                                     resultSet.getInt("user_id"));
 
                             Post post = new Post(dto);
-                            post.setId(resultSet.getInt("id"));
                             post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                             post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
 
                             postList.add(post);
                         }
                     } else {
-                        throw new SQLException("Failed to extract data from database table");
+                        throw new SQLException("No Posts in table to extract");
                     }
                 }
             }
         }
         return postList;
+    }
+
+    public Post updatePost(Post post) throws SQLException {
+        Post updatedPost;
+        String sql = "UPDATE posts SET content = ?, updated_at = NOW() WHERE id = ? RETURNING *";;
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, post.getContent());
+                statement.setInt(2, post.getId());
+
+
+                try(ResultSet resultSet = statement.executeQuery()) {
+                   if (resultSet.next()) {
+                       CreatePostDTO dto = new CreatePostDTO(resultSet.getInt("id"),
+                               resultSet.getString("content"),
+                               resultSet.getInt("user_id"));
+
+                       updatedPost = new Post(dto);
+                       updatedPost.setId(resultSet.getInt("id"));
+                       updatedPost.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                       updatedPost.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+                   } else {
+                       throw new SQLException("No Posts in table by the given ID");
+                   }
+                }
+            }
+        }
+
+        return updatedPost;
     }
 
 }

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class GenericApiResponse<T> {
-    boolean success;
     String message;
     T data;
 }

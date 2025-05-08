@@ -43,4 +43,6 @@
 # 08 - 05 - 2025
 - Created endpoint for getting post by id
 - Updated PostDao with getById method and logic
-- 
+- Created endpoint for getting all posts 
+- Added a new response Generic Api Response
+- Created endpoint for updating posts by id

@@ -24,8 +24,8 @@ public class PostService {
              Post post = new Post(dto);
 
              return dao.save(post);
-        } catch (ValidationException e) {
-            throw e;
+        } catch (ValidationException | SQLException e) {
+            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException("Post Service Error", e);
         }
@@ -45,6 +45,18 @@ public class PostService {
         try {
             return dao.getAllPosts();
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Post Service Error", e);
+        }
+    }
+
+    public Post updatePost(CreatePostDTO dto) {
+        try {
+            createPostDTOValidator.validate(dto);
+            Post post = new Post(dto);
+            return dao.updatePost(post);
+        } catch (ValidationException | SQLException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException("Post Service Error", e);
