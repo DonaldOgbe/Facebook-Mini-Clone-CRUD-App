@@ -5,6 +5,8 @@ import org.deodev.model.Post;
 import org.deodev.util.DatabaseUtil;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostDAO {
 
@@ -69,10 +71,43 @@ public class PostDAO {
                     }
                 }
             }
-
         }
         return post;
     }
+
+    public List<Post> getAllPosts() throws SQLException {
+        String sql = "SELECT * FROM posts";
+        List<Post> postList = new ArrayList<>();
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+                try(ResultSet resultSet = statement.executeQuery()) {
+
+                    if (resultSet != null) {
+                        while (resultSet.next()) {
+                            CreatePostDTO dto = new CreatePostDTO(resultSet.getString("content"),
+                                    resultSet.getInt("user_id"));
+
+                            Post post = new Post(dto);
+                            post.setId(resultSet.getInt("id"));
+                            post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                            post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+
+                            postList.add(post);
+                        }
+                    } else {
+                        throw new SQLException("Failed to extract data from database table");
+                    }
+                }
+            }
+        }
+        return postList;
+    }
+
 }
 
 

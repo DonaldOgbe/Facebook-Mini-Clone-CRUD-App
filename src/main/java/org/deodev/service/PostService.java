@@ -8,6 +8,7 @@ import org.deodev.validation.CreatePostDTOValidator;
 import org.deodev.validation.Validator;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class PostService {
     private final PostDAO dao;
@@ -33,6 +34,16 @@ public class PostService {
     public Post findById(int id) {
         try {
             return dao.getById(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Post Service Error", e);
+        }
+    }
+
+    public List<Post> getAllPosts() {
+        try {
+            return dao.getAllPosts();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
