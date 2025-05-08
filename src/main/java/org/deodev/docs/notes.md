@@ -38,4 +38,9 @@
 - Created Post entity and PostDAO with save method and logic
 - Created CreatePostDTO and validator 
 - Created endpoint for creating a post with the controller and service
+
+
+# 08 - 05 - 2025
+- Created endpoint for getting post by id
+- Updated PostDao with getById method and logic
 - 

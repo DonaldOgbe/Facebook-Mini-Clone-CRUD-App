@@ -25,9 +25,11 @@ public class CreatePostController extends HttpServlet {
         postService = new PostService();
     }
 
+//    /create
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession(false);
         ObjectMapper mapper = new ObjectMapper();
 
@@ -57,6 +59,13 @@ public class CreatePostController extends HttpServlet {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to create Post", e.getMessage()));
+        } catch (Exception e) {
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to create Post", e.getMessage()));
         }
     }
 }
+
+
+

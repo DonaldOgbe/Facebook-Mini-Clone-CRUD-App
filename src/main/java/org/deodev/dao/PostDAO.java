@@ -1,5 +1,6 @@
 package org.deodev.dao;
 
+import org.deodev.dto.request.CreatePostDTO;
 import org.deodev.model.Post;
 import org.deodev.util.DatabaseUtil;
 
@@ -38,4 +39,40 @@ public class PostDAO {
 
         return post;
     }
+
+
+    public Post getById(int id) throws SQLException {
+        String sql = "SELECT * FROM posts WHERE id = ?";
+        CreatePostDTO dto;
+        Post post;
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, id);
+
+                try(ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        dto = new CreatePostDTO(resultSet.getString("content"),
+                                resultSet.getInt("user_id"));
+
+                        post = new Post(dto);
+                        post.setId(resultSet.getInt("id"));
+                        post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                        post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+
+                    } else {
+                        throw new SQLException("Failed to extract data from database table");
+                    }
+                }
+            }
+
+        }
+        return post;
+    }
 }
+
+

@@ -1,16 +1,12 @@
 package org.deodev.dto.request;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreatePostDTO {
     private String content;
     private int userId;
-
-    public CreatePostDTO(String content, int userId) {
-        this.content = content;
-        this.userId = userId;
-    }
-
-    public CreatePostDTO() {};
 }

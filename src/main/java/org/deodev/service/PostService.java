@@ -7,6 +7,8 @@ import org.deodev.model.Post;
 import org.deodev.validation.CreatePostDTOValidator;
 import org.deodev.validation.Validator;
 
+import java.sql.SQLException;
+
 public class PostService {
     private final PostDAO dao;
     private final Validator<CreatePostDTO> createPostDTOValidator = new CreatePostDTOValidator();
@@ -28,5 +30,13 @@ public class PostService {
         }
     }
 
-
+    public Post findById(int id) {
+        try {
+            return dao.getById(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Post Service Error", e);
+        }
+    }
 }
