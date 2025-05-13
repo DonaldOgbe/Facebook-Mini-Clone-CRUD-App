@@ -47,3 +47,12 @@
 - Added a new response Generic Api Response
 - Created endpoint for updating posts by id
 - Created endpoint for deleting post by id
+
+# 12 - 05 - 2025
+- Created endpoint for creating a comment:   
+Created the comment entity, the dao, the dto, the service, a validator and the controller
+- Fixed an error in the post DAO and endpoints
+
+
+# 13 - 05 - 2025 
+- Fixed a bug in the createComment controller

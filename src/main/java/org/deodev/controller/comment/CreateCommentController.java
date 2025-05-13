@@ -1,4 +1,4 @@
-package org.deodev.controller.post;
+package org.deodev.controller.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -7,27 +7,28 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.deodev.dto.request.CreateCommentDTO;
 import org.deodev.dto.response.ErrorResponse;
-import org.deodev.dto.response.GenericApiResponse;
 import org.deodev.exception.ValidationException;
-import org.deodev.service.PostService;
+import org.deodev.model.Comment;
+import org.deodev.model.User;
+import org.deodev.service.CommentService;
 
 import java.io.IOException;
 import java.util.Map;
 
+@WebServlet("/comments/create/*")
+public class CreateCommentController extends HttpServlet {
 
-@WebServlet("/posts/delete/*")
-public class DeletePostController extends HttpServlet {
-
-    private PostService postService;
+    private CommentService commentService;
 
     @Override
     public void init() throws ServletException {
-        postService = new PostService();
+        commentService = new CommentService();
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String pathInfo = request.getPathInfo();
@@ -46,19 +47,34 @@ public class DeletePostController extends HttpServlet {
                 throw new ValidationException("Invalid id parameter");
             }
 
-            postService.deletePost(postId);
+            User user = (User) session.getAttribute("user");
+
+            CreateCommentDTO dto = mapper.readValue(request.getReader(), CreateCommentDTO.class);
+
+            dto.setUserId(user.getId());
+            dto.setPostId(postId);
+            Comment comment = commentService.createComment(dto);
 
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK);
-            mapper.writeValue(response.getWriter(), new GenericApiResponse<>("Post Deleted Successfully", Map.of("id", postId)));
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            mapper.writeValue(response.getWriter(),
+                    Map.of(
+                            "message", "Comment Created Successfully",
+                            "user_id", user.getId(),
+                            "email", user.getEmail(),
+                            "comment", comment.getPostId()
+                    )
+            );
+
         } catch (ServletException e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to delete Post", e.getMessage()));
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to create Comment", e.getMessage()));
         } catch (Exception e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to delete Post", e.getMessage()));
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to create Comment", e.getMessage()));
         }
+
     }
 }

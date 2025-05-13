@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.deodev.dto.response.ErrorResponse;
+import org.deodev.exception.ValidationException;
 import org.deodev.model.Post;
 import org.deodev.service.PostService;
 
@@ -32,7 +33,12 @@ public class GetPostController extends HttpServlet {
         int postId;
 
         try {
+
             postId = Integer.parseInt(pathInfo.substring(1));
+
+            if (postId < 0) {
+                throw new ValidationException("Invalid id parameter");
+            }
 
             Post post = postService.findById(postId);
 

@@ -34,10 +34,7 @@ public class PostDAO {
                     post.setId(generatedKeys.getInt(1));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
         return post;
     }
 
@@ -56,10 +53,11 @@ public class PostDAO {
 
                 try(ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        dto = new CreatePostDTO(resultSet.getInt("id"), resultSet.getString("content"),
+                        dto = new CreatePostDTO(resultSet.getString("content"),
                                 resultSet.getInt("user_id"));
 
                         post = new Post(dto);
+                        post.setId(resultSet.getInt("id"));
                         post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                         post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
 
@@ -86,10 +84,11 @@ public class PostDAO {
 
                     if (resultSet != null) {
                         while (resultSet.next()) {
-                            CreatePostDTO dto = new CreatePostDTO(resultSet.getInt("id"), resultSet.getString("content"),
+                            CreatePostDTO dto = new CreatePostDTO(resultSet.getString("content"),
                                     resultSet.getInt("user_id"));
 
                             Post post = new Post(dto);
+                            post.setId(resultSet.getInt("id"));
                             post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                             post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
 
@@ -104,7 +103,7 @@ public class PostDAO {
         return postList;
     }
 
-    public Post updatePost(Post post) throws SQLException {
+    public Post updatePost(String content, int postId) throws SQLException {
         Post updatedPost;
         String sql = "UPDATE posts SET content = ?, updated_at = NOW() WHERE id = ? RETURNING *";;
 
@@ -114,14 +113,13 @@ public class PostDAO {
             }
 
             try(PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, post.getContent());
-                statement.setInt(2, post.getId());
+                statement.setString(1, content);
+                statement.setInt(2, postId);
 
 
                 try(ResultSet resultSet = statement.executeQuery()) {
                    if (resultSet.next()) {
-                       CreatePostDTO dto = new CreatePostDTO(resultSet.getInt("id"),
-                               resultSet.getString("content"),
+                       CreatePostDTO dto = new CreatePostDTO(resultSet.getString("content"),
                                resultSet.getInt("user_id"));
 
                        updatedPost = new Post(dto);

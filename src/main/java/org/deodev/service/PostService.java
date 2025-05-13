@@ -51,11 +51,10 @@ public class PostService {
         }
     }
 
-    public Post updatePost(CreatePostDTO dto) {
+    public Post updatePost(CreatePostDTO dto, int postId) {
         try {
             createPostDTOValidator.validate(dto);
-            Post post = new Post(dto);
-            return dao.updatePost(post);
+            return dao.updatePost(dto.getContent(), postId);
         } catch (ValidationException | SQLException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import org.deodev.dto.request.CreatePostDTO;
 import org.deodev.dto.response.ErrorResponse;
 import org.deodev.dto.response.GenericApiResponse;
+import org.deodev.exception.ValidationException;
 import org.deodev.model.Post;
 import org.deodev.service.PostService;
 
@@ -43,9 +44,13 @@ public class UpdatePostController extends HttpServlet {
 
             postId = Integer.parseInt(pathInfo.substring(1));
 
+            if (postId < 0) {
+                throw new ValidationException("Invalid id parameter");
+            }
+
+
             CreatePostDTO dto = mapper.readValue(request.getReader(), CreatePostDTO.class);
-            dto.setId(postId);
-            Post post = postService.updatePost(dto);
+            Post post = postService.updatePost(dto, postId);
 
             mapper.findAndRegisterModules();
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
