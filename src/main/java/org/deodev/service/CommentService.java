@@ -31,4 +31,14 @@ public class CommentService {
             throw new RuntimeException("Comment Service Error", e);
         }
     }
+
+    public Comment getById(int id) {
+        try {
+            return dao.getById(id);
+        } catch (ValidationException | SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Comment Service Error", e);
+        }
+    }
 }

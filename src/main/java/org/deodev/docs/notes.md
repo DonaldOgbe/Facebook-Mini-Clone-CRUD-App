@@ -56,3 +56,6 @@ Created the comment entity, the dao, the dto, the service, a validator and the c
 
 # 13 - 05 - 2025 
 - Fixed a bug in the createComment controller
+- Created endpoint for getting comment by id:   
+Created a controller and added methods in the dao and in the service
+- 

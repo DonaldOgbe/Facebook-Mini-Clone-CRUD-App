@@ -1,6 +1,7 @@
 package org.deodev.dao;
 
 
+import org.deodev.dto.request.CreateCommentDTO;
 import org.deodev.model.Comment;
 import org.deodev.util.DatabaseUtil;
 
@@ -37,4 +38,39 @@ public class CommentDAO {
 
         return comment;
     }
+
+    public Comment getById(int id) throws SQLException {
+        String sql = "SELECT * FROM comments WHERE id = ?";
+        CreateCommentDTO dto;
+        Comment comment;
+
+        try(Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, id);
+
+                try(ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        dto = new CreateCommentDTO(resultSet.getString("content"),
+                                resultSet.getInt("user_id"), resultSet.getInt("post_id"));
+
+                        comment = new Comment(dto);
+                        comment.setId(resultSet.getInt("id"));
+                        comment.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                        comment.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+
+                    } else {
+                        throw new SQLException("Failed to extract data from database table");
+                    }
+                }
+            }
+        }
+
+        return comment;
+    }
 }
+
+
