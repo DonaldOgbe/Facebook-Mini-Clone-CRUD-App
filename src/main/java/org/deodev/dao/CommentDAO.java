@@ -4,8 +4,9 @@ package org.deodev.dao;
 import org.deodev.dto.request.CreateCommentDTO;
 import org.deodev.model.Comment;
 import org.deodev.util.DatabaseUtil;
-
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommentDAO {
     public Comment save(Comment comment) throws SQLException {
@@ -70,6 +71,81 @@ public class CommentDAO {
         }
 
         return comment;
+    }
+
+    public List<Comment> getAll() throws SQLException {
+        List<Comment> list = new ArrayList<>();
+        String sql = "SELECT * FROM comments";
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+                try(ResultSet resultSet = statement.executeQuery()) {
+
+                    if (resultSet != null) {
+                        while (resultSet.next()) {
+                            CreateCommentDTO dto = new CreateCommentDTO(resultSet.getString("content"),
+                                    resultSet.getInt("user_id"), resultSet.getInt("post_id"));
+
+                            Comment comment = new Comment(dto);
+                            comment.setId(resultSet.getInt("id"));
+                            comment.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                            comment.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+
+                            list.add(comment);
+                        }
+                    } else {
+                        throw new SQLException("No Comments in table to extract");
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    public Comment update(String content, int commentId) throws SQLException {
+        Comment comment;
+        String sql = "UPDATE comments SET content = ?, updated_at = NOW() WHERE id = ? RETURNING *";;
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, content);
+                statement.setInt(2, commentId);
+
+                try(ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        comment = parseResultSet(resultSet);
+                    } else {
+                        throw new SQLException("No Comments in table by the given ID");
+                    }
+                }
+            }
+        }
+        return comment;
+    }
+
+    private Comment parseResultSet(ResultSet resultSet) {
+        Comment comment;
+
+        try {
+            CreateCommentDTO dto = new CreateCommentDTO(resultSet.getString("content"),
+                    resultSet.getInt("user_id"), resultSet.getInt("post_id"));
+            comment = new Comment(dto);
+            comment.setId(resultSet.getInt("id"));
+            comment.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+            comment.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return  comment;
     }
 }
 

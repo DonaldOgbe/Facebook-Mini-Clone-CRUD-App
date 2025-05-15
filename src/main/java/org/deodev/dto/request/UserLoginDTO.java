@@ -1,8 +1,5 @@
 package org.deodev.dto.request;
 
-import lombok.Data;
-
-@Data
 public class UserLoginDTO {
     private String email;
     private String password;
@@ -13,4 +10,20 @@ public class UserLoginDTO {
     }
 
     public UserLoginDTO() {}
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

@@ -58,4 +58,9 @@ Created the comment entity, the dao, the dto, the service, a validator and the c
 - Fixed a bug in the createComment controller
 - Created endpoint for getting comment by id:   
 Created a controller and added methods in the dao and in the service
-- 
+
+
+# 15 - 05 - 2025 
+- Fixed maven cache bug
+- updated entities, dto's and responses that used Lombok, and changed all to use manual
+- Added new feature and created endpoint for getting all comments

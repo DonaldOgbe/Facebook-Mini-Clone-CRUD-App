@@ -62,7 +62,7 @@ public class CreateCommentController extends HttpServlet {
                             "message", "Comment Created Successfully",
                             "user_id", user.getId(),
                             "email", user.getEmail(),
-                            "comment", comment.getPostId()
+                            "post_id", comment.getPostId()
                     )
             );
 

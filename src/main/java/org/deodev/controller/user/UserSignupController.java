@@ -7,10 +7,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.deodev.dto.request.UserSignupDTO;
 import org.deodev.dto.response.ErrorResponse;
-import org.deodev.dto.response.SignupResponse;
 import org.deodev.model.User;
 import org.deodev.service.AuthService;
 import java.io.IOException;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebServlet("/signup")
@@ -34,19 +35,21 @@ public class UserSignupController extends HttpServlet {
             User user = authService.registerUser(userSignupDTO);
 
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(HttpServletResponse.SC_CREATED);
 
-            mapper.writeValue(response.getWriter(), new SignupResponse(user));
+            mapper.writeValue(response.getWriter(),
+                    Map.of("message", "Signup Successful",
+                            "data", user.getId()));
         } catch (RuntimeException e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-            mapper.writeValue(response.getWriter(), new ErrorResponse("Registration Failed", e.getMessage()));
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Signup Failed", e.getMessage()));
         } catch (Exception e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-            mapper.writeValue(response.getWriter(), new ErrorResponse("Registration Failed", e.getMessage()));
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Signup Failed", e.getMessage()));
             e.printStackTrace();
         }
     }

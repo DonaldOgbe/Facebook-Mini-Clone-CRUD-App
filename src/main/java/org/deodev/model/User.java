@@ -1,11 +1,8 @@
 package org.deodev.model;
 
-import lombok.Data;
 import org.deodev.dto.request.UserSignupDTO;
-
 import java.time.LocalDateTime;
 
-@Data
 public class User {
     private int id;
     private String name;

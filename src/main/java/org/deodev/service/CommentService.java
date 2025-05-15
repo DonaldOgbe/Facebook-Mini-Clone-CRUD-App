@@ -8,6 +8,7 @@ import org.deodev.validation.CreateCommentDTOValidator;
 import org.deodev.validation.Validator;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class CommentService {
 
@@ -35,10 +36,32 @@ public class CommentService {
     public Comment getById(int id) {
         try {
             return dao.getById(id);
-        } catch (ValidationException | SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException("Comment Service Error", e);
         }
     }
+
+    public List<Comment> getAll() {
+        try {
+            return dao.getAll();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Comment Service Error", e);
+        }
+    }
+
+    public Comment update(String content, int id) {
+        try {
+            return dao.update(content, id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Comment Service Error", e);
+        }
+    }
+
+
 }

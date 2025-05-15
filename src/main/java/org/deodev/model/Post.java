@@ -1,15 +1,8 @@
 package org.deodev.model;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.deodev.dto.request.CreatePostDTO;
-
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@Data
 public class Post {
     private int id;
     private String content;
@@ -23,5 +16,45 @@ public class Post {
     }
 
     public Post() {
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
