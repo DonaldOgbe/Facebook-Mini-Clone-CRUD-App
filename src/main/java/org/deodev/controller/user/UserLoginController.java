@@ -45,12 +45,10 @@ public class UserLoginController extends HttpServlet {
         } catch (RuntimeException e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
             mapper.writeValue(response.getWriter(), new ErrorResponse("Login Failed", e.getMessage()));
         }  catch (Exception e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
             mapper.writeValue(response.getWriter(), new ErrorResponse("Login Failed", e.getMessage()));
             e.printStackTrace();
         }

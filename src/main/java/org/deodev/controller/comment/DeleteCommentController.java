@@ -7,17 +7,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.deodev.dto.request.CreateCommentDTO;
 import org.deodev.dto.response.ErrorResponse;
+import org.deodev.dto.response.GenericApiResponse;
 import org.deodev.exception.ValidationException;
-import org.deodev.model.Comment;
-import org.deodev.model.User;
 import org.deodev.service.CommentService;
+
 import java.io.IOException;
 import java.util.Map;
 
-@WebServlet("/comments/create/*")
-public class CreateCommentController extends HttpServlet {
+@WebServlet("/comments/delete/*")
+public class DeleteCommentController extends HttpServlet {
 
     private CommentService commentService;
 
@@ -27,53 +26,38 @@ public class CreateCommentController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String pathInfo = request.getPathInfo();
         HttpSession session = request.getSession(false);
         ObjectMapper mapper = new ObjectMapper();
-        int postId;
+        int commentId;
 
         try {
             if (session == null || session.getAttribute("user") == null) {
                 throw new ServletException("Unauthorized user not logged in");
             }
 
-            postId = Integer.parseInt(pathInfo.substring(1));
+            commentId = Integer.parseInt(pathInfo.substring(1));
 
-            if (postId < 0) {
+            if (commentId < 0) {
                 throw new ValidationException("Invalid id parameter");
             }
 
-            User user = (User) session.getAttribute("user");
-
-            CreateCommentDTO dto = mapper.readValue(request.getReader(), CreateCommentDTO.class);
-
-            dto.setUserId(user.getId());
-            dto.setPostId(postId);
-            Comment comment = commentService.createComment(dto);
+            commentService.delete(commentId);
 
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_CREATED);
-            mapper.writeValue(response.getWriter(),
-                    Map.of(
-                            "message", "Comment Created Successfully",
-                            "user_id", user.getId(),
-                            "email", user.getEmail(),
-                            "post_id", comment.getPostId()
-                    )
-            );
-
+            response.setStatus(HttpServletResponse.SC_OK);
+            mapper.writeValue(response.getWriter(), new GenericApiResponse<>("Comment Deleted Successfully", Map.of("id", commentId)));
         } catch (ServletException e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to create Comment", e.getMessage()));
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to delete Comment", e.getMessage()));
         } catch (Exception e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to create Comment", e.getMessage()));
+            mapper.writeValue(response.getWriter(), new ErrorResponse("Failed to delete Comment", e.getMessage()));
         }
-
     }
 }

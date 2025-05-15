@@ -6,7 +6,6 @@ import org.deodev.exception.ValidationException;
 import org.deodev.model.Comment;
 import org.deodev.validation.CreateCommentDTOValidator;
 import org.deodev.validation.Validator;
-
 import java.sql.SQLException;
 import java.util.List;
 
@@ -23,7 +22,6 @@ public class CommentService {
         try {
             commentDTOValidator.validate(dto);
             Comment comment = new Comment(dto);
-            System.out.println("Comment(service): " + comment.getContent());
 
             return dao.save(comment);
         } catch (ValidationException | SQLException e) {
@@ -63,5 +61,14 @@ public class CommentService {
         }
     }
 
+    public void delete(int id) {
+        try {
+            dao.deletePost(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Comment Service Error", e);
+        }
+    }
 
 }

@@ -11,7 +11,6 @@ import org.deodev.dto.response.ErrorResponse;
 import org.deodev.exception.ValidationException;
 import org.deodev.model.Post;
 import org.deodev.service.PostService;
-
 import java.io.IOException;
 
 @WebServlet("/posts/*")

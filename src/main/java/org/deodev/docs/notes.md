@@ -64,3 +64,5 @@ Created a controller and added methods in the dao and in the service
 - Fixed maven cache bug
 - updated entities, dto's and responses that used Lombok, and changed all to use manual
 - Added new feature and created endpoint for getting all comments
+- Added new feature and created endpoint for updating a comment by id
+- Added new feature and created endpoint for deleting a comment by id

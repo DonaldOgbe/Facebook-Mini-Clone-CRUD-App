@@ -10,13 +10,15 @@ import org.deodev.validation.UserRegistrationDTOValidator;
 import org.deodev.validation.Validator;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.SQLException;
+
 public class AuthService {
-    private final UserDAO userDAO;
+    private final UserDAO dao;
     private final Validator<UserSignupDTO> userRegistrationDTOValidator = new UserRegistrationDTOValidator();
     private final Validator<UserLoginDTO> userLoginDTOValidator = new UserLoginDTOValidator();
 
     public AuthService() {
-        this.userDAO = new UserDAO();
+        this.dao = new UserDAO();
     }
 
     public User registerUser(UserSignupDTO dto) {
@@ -30,7 +32,7 @@ public class AuthService {
             dto.setPassword(hashPassword(dto.getPassword()));
             User user = new User(dto);
 
-            return userDAO.save(user);
+            return dao.save(user);
         } catch (ValidationException e) {
             throw e;
         } catch (Exception e) {
@@ -46,7 +48,7 @@ public class AuthService {
                 throw new ValidationException("Email does not exist");
             }
 
-            User user = userDAO.findUserByEmail(dto.getEmail());
+            User user = dao.findUserByEmail(dto.getEmail());
 
             if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
                 throw new ValidationException("Incorrect Password");
@@ -65,6 +67,12 @@ public class AuthService {
     }
 
     public boolean emailExist(String email) {
-        return userDAO.findUserByEmail(email) != null;
+        boolean exists;
+        try {
+           exists = dao.emailExist(email);
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return exists;
     }
 }

@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.deodev.dto.response.ErrorResponse;
-
 import java.io.IOException;
 
 @WebServlet("/logout")

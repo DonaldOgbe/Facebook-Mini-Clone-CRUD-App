@@ -11,7 +11,6 @@ import org.deodev.model.User;
 import org.deodev.service.AuthService;
 import java.io.IOException;
 import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebServlet("/signup")

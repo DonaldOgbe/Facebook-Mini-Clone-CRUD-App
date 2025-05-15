@@ -1,6 +1,7 @@
 package org.deodev.dao;
 
 import org.deodev.dto.request.CreatePostDTO;
+import org.deodev.model.Comment;
 import org.deodev.model.Post;
 import org.deodev.util.DatabaseUtil;
 import java.sql.*;
@@ -40,7 +41,6 @@ public class PostDAO {
 
     public Post getById(int id) throws SQLException {
         String sql = "SELECT * FROM posts WHERE id = ?";
-        CreatePostDTO dto;
         Post post;
 
         try (Connection connection = DatabaseUtil.getConnection()) {
@@ -53,14 +53,7 @@ public class PostDAO {
 
                 try(ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        dto = new CreatePostDTO(resultSet.getString("content"),
-                                resultSet.getInt("user_id"));
-
-                        post = new Post(dto);
-                        post.setId(resultSet.getInt("id"));
-                        post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                        post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
-
+                        post = parseResultSet(resultSet);
                     } else {
                         throw new SQLException("Failed to extract data from database table");
                     }
@@ -72,7 +65,7 @@ public class PostDAO {
 
     public List<Post> getAllPosts() throws SQLException {
         String sql = "SELECT * FROM posts";
-        List<Post> postList = new ArrayList<>();
+        List<Post> list = new ArrayList<>();
 
         try (Connection connection = DatabaseUtil.getConnection()) {
             if (connection == null) {
@@ -84,15 +77,8 @@ public class PostDAO {
 
                     if (resultSet != null) {
                         while (resultSet.next()) {
-                            CreatePostDTO dto = new CreatePostDTO(resultSet.getString("content"),
-                                    resultSet.getInt("user_id"));
-
-                            Post post = new Post(dto);
-                            post.setId(resultSet.getInt("id"));
-                            post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                            post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
-
-                            postList.add(post);
+                            Post post = parseResultSet(resultSet);
+                            list.add(post);
                         }
                     } else {
                         throw new SQLException("No Posts in table to extract");
@@ -100,11 +86,11 @@ public class PostDAO {
                 }
             }
         }
-        return postList;
+        return list;
     }
 
     public Post updatePost(String content, int postId) throws SQLException {
-        Post updatedPost;
+        Post post;
         String sql = "UPDATE posts SET content = ?, updated_at = NOW() WHERE id = ? RETURNING *";;
 
         try (Connection connection = DatabaseUtil.getConnection()) {
@@ -116,24 +102,16 @@ public class PostDAO {
                 statement.setString(1, content);
                 statement.setInt(2, postId);
 
-
                 try(ResultSet resultSet = statement.executeQuery()) {
                    if (resultSet.next()) {
-                       CreatePostDTO dto = new CreatePostDTO(resultSet.getString("content"),
-                               resultSet.getInt("user_id"));
-
-                       updatedPost = new Post(dto);
-                       updatedPost.setId(resultSet.getInt("id"));
-                       updatedPost.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                       updatedPost.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+                       post = parseResultSet(resultSet);
                    } else {
                        throw new SQLException("No Posts in table by the given ID");
                    }
                 }
             }
         }
-
-        return updatedPost;
+        return post;
     }
 
     public void deletePost(int id) throws SQLException {
@@ -153,6 +131,24 @@ public class PostDAO {
                 }
             }
         }
+    }
+
+    private Post parseResultSet(ResultSet resultSet) {
+        Post post;
+
+        try {
+            CreatePostDTO dto = new CreatePostDTO(resultSet.getString("content"),
+                    resultSet.getInt("user_id"));
+
+            post = new Post(dto);
+            post.setId(resultSet.getInt("id"));
+            post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+            post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        return post;
     }
 
 }
