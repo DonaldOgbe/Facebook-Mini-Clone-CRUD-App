@@ -70,3 +70,5 @@ Created a controller and added methods in the dao and in the service
 # 16 - 05 - 2025
 - Added new feature and created endpoint for creating a like for post and comment
 - Added new feature and created endpoint for deleting a like by id
+- Updated the get post by id endpoint by add a comments field, to add the list of comments of the post
+- 

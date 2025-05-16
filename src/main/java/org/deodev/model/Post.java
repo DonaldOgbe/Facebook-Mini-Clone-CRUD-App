@@ -2,6 +2,7 @@ package org.deodev.model;
 
 import org.deodev.dto.request.CreatePostDTO;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Post {
     private int id;
@@ -9,6 +10,7 @@ public class Post {
     private int userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<Comment> comments;
 
     public Post(CreatePostDTO dto) {
         this.content = dto.getContent();
@@ -17,6 +19,34 @@ public class Post {
 
     public Post() {
     }
+
+//    Getters
+
+    public int getId() {
+        return id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    //    Setters
 
     public void setId(int id) {
         this.id = id;
@@ -38,23 +68,7 @@ public class Post {
         this.updatedAt = updatedAt;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

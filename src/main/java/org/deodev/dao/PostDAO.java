@@ -1,5 +1,6 @@
 package org.deodev.dao;
 
+import org.deodev.dto.request.CreateCommentDTO;
 import org.deodev.dto.request.CreatePostDTO;
 import org.deodev.model.Comment;
 import org.deodev.model.Post;
@@ -11,14 +12,14 @@ import java.util.List;
 public class PostDAO {
 
     public Post save(Post post) throws SQLException {
-        String sql = "INSERT INTO posts (user_id, content) VALUES (?, ?)";
+        String query = "INSERT INTO posts (user_id, content) VALUES (?, ?)";
 
         try (Connection connection = DatabaseUtil.getConnection()) {
             if (connection == null) {
                 throw new SQLException("Failed to establish a database connection.");
             }
 
-            try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setInt(1, post.getUserId());
                 statement.setString(2, post.getContent());
 
@@ -40,7 +41,7 @@ public class PostDAO {
     }
 
     public Post getById(int id) throws SQLException {
-        String sql = "SELECT * FROM posts WHERE id = ?";
+        String query = "SELECT * FROM posts WHERE id = ?";
         Post post;
 
         try (Connection connection = DatabaseUtil.getConnection()) {
@@ -48,7 +49,7 @@ public class PostDAO {
                 throw new SQLException("Failed to establish a database connection.");
             }
 
-            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+            try(PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setInt(1, id);
 
                 try(ResultSet resultSet = statement.executeQuery()) {
@@ -57,6 +58,8 @@ public class PostDAO {
                     } else {
                         throw new SQLException("Failed to extract data from database table");
                     }
+
+                    post.setComments(getCommentsByPostId(post.getId()));
                 }
             }
         }
@@ -64,7 +67,7 @@ public class PostDAO {
     }
 
     public List<Post> getAllPosts() throws SQLException {
-        String sql = "SELECT * FROM posts";
+        String query = "SELECT * FROM posts";
         List<Post> list = new ArrayList<>();
 
         try (Connection connection = DatabaseUtil.getConnection()) {
@@ -72,7 +75,7 @@ public class PostDAO {
                 throw new SQLException("Failed to establish a database connection.");
             }
 
-            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+            try(PreparedStatement statement = connection.prepareStatement(query)) {
                 try(ResultSet resultSet = statement.executeQuery()) {
 
                     if (resultSet != null) {
@@ -91,14 +94,14 @@ public class PostDAO {
 
     public Post updatePost(String content, int postId) throws SQLException {
         Post post;
-        String sql = "UPDATE posts SET content = ?, updated_at = NOW() WHERE id = ? RETURNING *";;
+        String query = "UPDATE posts SET content = ?, updated_at = NOW() WHERE id = ? RETURNING *";;
 
         try (Connection connection = DatabaseUtil.getConnection()) {
             if (connection == null) {
                 throw new SQLException("Failed to establish a database connection.");
             }
 
-            try(PreparedStatement statement = connection.prepareStatement(sql)) {
+            try(PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, content);
                 statement.setInt(2, postId);
 
@@ -115,13 +118,13 @@ public class PostDAO {
     }
 
     public void deletePost(int id) throws SQLException {
-        String sql = "DELETE FROM posts WHERE id = ?";
+        String query = "DELETE FROM posts WHERE id = ?";
 
         try (Connection connection = DatabaseUtil.getConnection()) {
             if (connection == null) {
                 throw new SQLException("Failed to establish a database connection.");
             }
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setInt(1, id);
 
                 int rowsAffected = statement.executeUpdate();
@@ -131,6 +134,39 @@ public class PostDAO {
                 }
             }
         }
+    }
+
+    public List<Comment> getCommentsByPostId(int id) throws SQLException {
+        List<Comment> list = new ArrayList<>();
+        String query = "SELECT * FROM comments WHERE post_id = ?";
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+
+                try(ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet != null) {
+                        while (resultSet.next()) {
+                            CreateCommentDTO dto = new CreateCommentDTO(resultSet.getString("content"),
+                                    resultSet.getInt("user_id"),
+                                    resultSet.getInt("post_id"));
+
+                            Comment comment = new Comment(dto);
+                            comment.setId(resultSet.getInt("id"));
+                            comment.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                            comment.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+
+                            list.add(comment);
+                        }
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     private Post parseResultSet(ResultSet resultSet) {
