@@ -63,7 +63,7 @@ public class CommentService {
 
     public void delete(int id) {
         try {
-            dao.deletePost(id);
+            dao.delete(id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {

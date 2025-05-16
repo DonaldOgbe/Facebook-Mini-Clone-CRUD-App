@@ -115,7 +115,7 @@ public class CommentDAO {
         return comment;
     }
 
-    public void deletePost(int id) throws SQLException {
+    public void delete(int id) throws SQLException {
         String sql = "DELETE FROM comments WHERE id = ?";
 
         try (Connection connection = DatabaseUtil.getConnection()) {
