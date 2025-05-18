@@ -1,8 +1,6 @@
 package org.deodev.dao;
 
-import org.deodev.dto.request.CreateCommentDTO;
 import org.deodev.dto.request.CreatePostDTO;
-import org.deodev.model.Comment;
 import org.deodev.model.Post;
 import org.deodev.util.DatabaseUtil;
 import java.sql.*;
@@ -58,8 +56,6 @@ public class PostDAO {
                     } else {
                         throw new SQLException("Failed to extract data from database table");
                     }
-
-                    post.setComments(getCommentsByPostId(post.getId()));
                 }
             }
         }
@@ -80,8 +76,7 @@ public class PostDAO {
 
                     if (resultSet != null) {
                         while (resultSet.next()) {
-                            Post post = parseResultSet(resultSet);
-                            list.add(post);
+                            list.add(parseResultSet(resultSet));
                         }
                     } else {
                         throw new SQLException("No Posts in table to extract");
@@ -136,9 +131,9 @@ public class PostDAO {
         }
     }
 
-    public List<Comment> getCommentsByPostId(int id) throws SQLException {
-        List<Comment> list = new ArrayList<>();
-        String query = "SELECT * FROM comments WHERE post_id = ?";
+    public List<Post> findPostsByUserId(int id) throws SQLException {
+        List<Post> list = new ArrayList<>();
+        String query = "SELECT * FROM posts WHERE user_id = ?";
 
         try (Connection connection = DatabaseUtil.getConnection()) {
             if (connection == null) {
@@ -151,17 +146,10 @@ public class PostDAO {
                 try(ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet != null) {
                         while (resultSet.next()) {
-                            CreateCommentDTO dto = new CreateCommentDTO(resultSet.getString("content"),
-                                    resultSet.getInt("user_id"),
-                                    resultSet.getInt("post_id"));
-
-                            Comment comment = new Comment(dto);
-                            comment.setId(resultSet.getInt("id"));
-                            comment.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                            comment.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
-
-                            list.add(comment);
+                            list.add(parseResultSet(resultSet));
                         }
+                    } else {
+                        throw new SQLException("No Posts found with the given user id");
                     }
                 }
             }

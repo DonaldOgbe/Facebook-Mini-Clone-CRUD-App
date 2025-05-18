@@ -2,10 +2,14 @@ package org.deodev.dao;
 
 
 
+import org.deodev.dto.request.CreatePostDTO;
 import org.deodev.dto.request.UserSignupDTO;
+import org.deodev.model.Post;
 import org.deodev.model.User;
 import org.deodev.util.DatabaseUtil;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
     public User save(User user) throws SQLException{

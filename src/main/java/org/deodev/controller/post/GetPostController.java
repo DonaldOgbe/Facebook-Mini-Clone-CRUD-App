@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.deodev.dto.response.ErrorResponse;
+import org.deodev.dto.response.post.GetPostResponseDTO;
 import org.deodev.exception.ValidationException;
 import org.deodev.model.Post;
 import org.deodev.service.PostService;
@@ -39,13 +40,13 @@ public class GetPostController extends HttpServlet {
                 throw new ValidationException("Invalid id parameter");
             }
 
-            Post post = postService.findById(postId);
+            GetPostResponseDTO postResponseDTO = postService.findById(postId);
 
             mapper.findAndRegisterModules();
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_OK);
-            mapper.writeValue(response.getWriter(), post);
+            mapper.writeValue(response.getWriter(), postResponseDTO);
         } catch (Exception e) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

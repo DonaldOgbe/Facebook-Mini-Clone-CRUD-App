@@ -71,4 +71,7 @@ Created a controller and added methods in the dao and in the service
 - Added new feature and created endpoint for creating a like for post and comment
 - Added new feature and created endpoint for deleting a like by id
 - Updated the get post by id endpoint by add a comments field, to add the list of comments of the post
+
+# 18 - 05 - 2025
+- Update the get post by id endpoint to respond with a custom dto instead of the post object, the dto contains the post, the first comment of the post and the number of comments
 - 

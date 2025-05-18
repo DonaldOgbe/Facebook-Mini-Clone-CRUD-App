@@ -10,7 +10,6 @@ public class Post {
     private int userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<Comment> comments;
 
     public Post(CreatePostDTO dto) {
         this.content = dto.getContent();
@@ -42,10 +41,6 @@ public class Post {
         return updatedAt;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
     //    Setters
 
     public void setId(int id) {
@@ -66,9 +61,5 @@ public class Post {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 }

@@ -41,7 +41,6 @@ public class CommentDAO {
 
     public Comment getById(int id) throws SQLException {
         String sql = "SELECT * FROM comments WHERE id = ?";
-        Comment comment;
 
         try(Connection connection = DatabaseUtil.getConnection()) {
             if (connection == null) {
@@ -53,14 +52,13 @@ public class CommentDAO {
 
                 try(ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        comment = parseResultSet(resultSet);
+                        return parseResultSet(resultSet);
                     } else {
                         throw new SQLException("Failed to extract data from database table");
                     }
                 }
             }
         }
-        return comment;
     }
 
     public List<Comment> getAll() throws SQLException {
@@ -91,7 +89,6 @@ public class CommentDAO {
     }
 
     public Comment update(String content, int commentId) throws SQLException {
-        Comment comment;
         String sql = "UPDATE comments SET content = ?, updated_at = NOW() WHERE id = ? RETURNING *";;
 
         try (Connection connection = DatabaseUtil.getConnection()) {
@@ -105,14 +102,13 @@ public class CommentDAO {
 
                 try(ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        comment = parseResultSet(resultSet);
+                        return parseResultSet(resultSet);
                     } else {
                         throw new SQLException("No Comments in table by the given ID");
                     }
                 }
             }
         }
-        return comment;
     }
 
     public void delete(int id) throws SQLException {
@@ -129,6 +125,78 @@ public class CommentDAO {
 
                 if (rowsAffected == 0) {
                     throw  new SQLException("No Comments in table by the given ID");
+                }
+            }
+        }
+    }
+
+    public Comment findByPostId(int id) throws SQLException {
+        Comment comment;
+        String query = "SELECT * FROM comments WHERE post_id = ? ORDER BY created_at ASC LIMIT 1";
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+
+                try(ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        comment = parseResultSet(resultSet);
+                    } else {
+                        throw new SQLException("No comments in table with give post id");
+                    }
+                }
+            }
+        }
+        return comment;
+    }
+
+    public List<Comment> getCommentsByPostId(int id) throws SQLException {
+        List<Comment> list = new ArrayList<>();
+        String query = "SELECT * FROM comments WHERE post_id = ?";
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+
+                try(ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet != null) {
+                        while (resultSet.next()) {
+                            list.add(parseResultSet(resultSet));
+                        }
+                    } else {
+                        throw new SQLException("No comments in table with give post id");
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    public int countCommentsByPostId(int id) throws SQLException {
+        String query = "SELECT COUNT(*) FROM comments WHERE post_id = ?";
+
+        try (Connection connection = DatabaseUtil.getConnection()) {
+            if (connection == null) {
+                throw new SQLException("Failed to establish a database connection.");
+            }
+
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getInt(1);
+                    } else {
+                        throw new SQLException("Failed to count comments for post_id = " + id);
+                    }
                 }
             }
         }
